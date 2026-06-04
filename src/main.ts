@@ -34,7 +34,7 @@ async function bootstrap() {
   // ══════════════════════════════════════════════════════════════
   // CONFIGURACIÓN SWAGGER
   // ══════════════════════════════════════════════════════════════
-  const port = process.env.PORT ?? 3000;
+  const port = process.env.PORT ? Number(process.env.PORT) : 3000;
 
   const swaggerConfig = new DocumentBuilder()
     .setTitle('🚀 TaskFlow Pro API')
@@ -111,7 +111,8 @@ async function bootstrap() {
     ],
   });
 
-  await app.listen(port);
+  // En entornos como Docker es útil escuchar en todas las interfaces
+  await app.listen(port, '0.0.0.0');
 
   console.log(`\n✅ Servidor ejecutándose en: http://localhost:${port}`);
   console.log(`📚 Swagger disponible en:    http://localhost:${port}/docs\n`);
