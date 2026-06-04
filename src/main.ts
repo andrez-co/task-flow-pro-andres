@@ -8,15 +8,16 @@ import { RolesService } from './modules/roles/roles.service';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-
-  // Configurar CORS usando la variable de entorno FRONTEND_ORIGIN (coma-separados)
-  const frontendOriginEnv = process.env.FRONTEND_ORIGIN;
-  const allowedOrigins = frontendOriginEnv
-    ? frontendOriginEnv.split(',').map((s) => s.trim())
-    : true;
+  const frontendOrigins = (
+    process.env.FRONTEND_ORIGIN ??
+    'http://localhost:5173,http://127.0.0.1:5173,http://localhost:5174,http://127.0.0.1:5174'
+  )
+    .split(',')
+    .map((origin) => origin.trim())
+    .filter(Boolean);
 
   app.enableCors({
-    origin: allowedOrigins,
+    origin: frontendOrigins,
     credentials: true,
   });
 
@@ -40,7 +41,7 @@ async function bootstrap() {
   // ══════════════════════════════════════════════════════════════
   // CONFIGURACIÓN SWAGGER
   // ══════════════════════════════════════════════════════════════
-  const port = process.env.PORT ? Number(process.env.PORT) : 3000;
+  const port = process.env.PORT ?? 3000;
 
   const swaggerConfig = new DocumentBuilder()
     .setTitle('🚀 TaskFlow Pro API')
@@ -84,9 +85,6 @@ async function bootstrap() {
       'support@taskflowpro.com',
     )
     .setLicense('MIT', 'https://opensource.org/licenses/MIT')
-    // Usar la URL pública del API si está en variables de entorno (útil en Render/producción)
-    .addServer(process.env.API_URL ?? `http://localhost:${port}`, 'Desarrollo')
-    .addServer('https://api.taskflowpro.com', 'Producción')
     .addBearerAuth(
       {
         type: 'http',
