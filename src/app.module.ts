@@ -11,6 +11,7 @@ import { ProjectsModule } from './modules/projects/projects.module';
 import { TasksModule } from './modules/task/task.module';
 import { MailModule } from './modules/mail/mail.module';
 import { ChatModule } from './modules/chat/chat.module';
+import { EstudiantesModule } from './modules/estudiantes/estudiantes.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { ChatModule } from './modules/chat/chat.module';
     DatabaseModule,
     AuthModule,
     RolesModule,
+    EstudiantesModule,
     UsersModule,
     ProjectsModule,
     TasksModule,

@@ -9,8 +9,14 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
 
+  // Configurar CORS usando la variable de entorno FRONTEND_ORIGIN (coma-separados)
+  const frontendOriginEnv = process.env.FRONTEND_ORIGIN;
+  const allowedOrigins = frontendOriginEnv
+    ? frontendOriginEnv.split(',').map((s) => s.trim())
+    : true;
+
   app.enableCors({
-    origin: true,
+    origin: allowedOrigins,
     credentials: true,
   });
 
