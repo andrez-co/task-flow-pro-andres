@@ -3,6 +3,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import * as fs from 'fs';
 import * as path from 'path';
+import { DatabaseHealthService } from './database.health';
 
 @Global()
 @Module({
@@ -61,5 +62,7 @@ import * as path from 'path';
       },
     }),
   ],
+  providers: [DatabaseHealthService],
+  exports: [DatabaseHealthService],
 })
 export class DatabaseModule {}
