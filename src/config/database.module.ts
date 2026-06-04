@@ -36,16 +36,24 @@ import * as path from 'path';
         // Soporte opcional de SSL (por ejemplo Aiven requiere SSL)
         const sslMode = configService.get<string>('DB_SSL') ?? '';
         const sslCaPath = configService.get<string>('DB_SSL_CA');
+        const sslCaContent = configService.get<string>('DB_SSL_CA_CONTENT');
         if (sslMode.toLowerCase() === 'required' || sslMode.toLowerCase() === 'true') {
-          const caPath = sslCaPath
-            ? path.resolve(process.cwd(), sslCaPath)
-            : path.resolve(process.cwd(), 'certs', 'aiven-ca.pem');
-
-          if (fs.existsSync(caPath)) {
-            base.ssl = { ca: fs.readFileSync(caPath) };
+          // Priorizar contenido en variable de entorno (útil en plataformas sin mounts)
+          if (sslCaContent) {
+            base.ssl = { ca: Buffer.from(sslCaContent) };
           } else {
-            // Si no existe el CA, dejar la configuración SSL vacía para que falle claramente
-            base.ssl = true;
+            const caPath = sslCaPath
+              ? path.resolve(process.cwd(), sslCaPath)
+              : path.resolve(process.cwd(), 'certs', 'aiven-ca.pem');
+
+            if (fs.existsSync(caPath)) {
+              base.ssl = { ca: fs.readFileSync(caPath) };
+            } else {
+              // No se encontró CA ni variable; lanzar un error explícito
+              throw new Error(
+                `DB_SSL is set (${sslMode}) but no CA found at ${caPath} and DB_SSL_CA_CONTENT is empty`,
+              );
+            }
           }
         }
 
