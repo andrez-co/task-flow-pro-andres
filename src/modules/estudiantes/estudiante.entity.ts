@@ -19,6 +19,14 @@ export class Estudiante {
   @Column({ type: 'varchar', length: 100, unique: true })
   codigo: string;
 
+  @ApiProperty({ description: 'Cédula de identidad', example: '1234567890', required: false })
+  @Column({ type: 'varchar', length: 20, nullable: true })
+  cedula: string;
+
+  @ApiProperty({ description: 'Número de teléfono', example: '0987654321', required: false })
+  @Column({ type: 'varchar', length: 20, nullable: true })
+  numero: string;
+
   @ApiProperty({ format: 'date-time', description: 'Fecha de creación' })
   @CreateDateColumn()
   fechaCreacion: Date;
